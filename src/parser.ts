@@ -1,6 +1,7 @@
 
 import Lexer, { TokenType } from './lexer'
 import AstNode, { NodeType } from './ast'
+import Diagnosis from './diagnosis'
 
 interface Token {
   token: string
@@ -8,9 +9,10 @@ interface Token {
 }
 export default class Parser {
   lexer: Lexer
-
+  diagnosis: Diagnosis
   constructor(source: string) {
-    this.lexer = new Lexer(source)
+    this.diagnosis = new Diagnosis()
+    this.lexer = new Lexer(source, this.diagnosis)
     this.lexer.nextToken()
   }
 

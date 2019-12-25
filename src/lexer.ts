@@ -1,4 +1,4 @@
-
+import Diagnosis, { Position, ErrorReport } from './diagnosis'
 
 export enum TokenType {
   TTIDEN,
@@ -10,8 +10,6 @@ export enum TokenType {
   TTDOT,
   TTEOF
 }
-
-
 
 function isAlpha(c: string): boolean {
   if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
@@ -45,17 +43,20 @@ export default class Lexer {
   pc: number
   source: string
   sourceLen: number
+  diagnosis: Diagnosis
+  pos: Position
 
-
-
-  constructor(source: string) {
-
+  constructor(source: string, diagnosis: Diagnosis) {
     this.source = source
     this.sourceLen = this.source.length
     this.cc = ''
     this.pc = 0
+    this.diagnosis = diagnosis
+    this.pos = new Position(0, 0)
     this.nextChar()
-
+  }
+  getPos(): Position {
+    return this.pos
   }
 
   nextChar() {
@@ -66,7 +67,7 @@ export default class Lexer {
       this.cc = ''
     }
   }
-  isType(tokenType:TokenType) :boolean {
+  isType(tokenType: TokenType): boolean {
     return this.tokenType == tokenType
   }
   nextToken() {
@@ -81,7 +82,6 @@ export default class Lexer {
       while (isAlphanum(this.cc)) {
         token += this.cc
         this.nextChar()
-
       }
       this.token = token
       this.tokenType = TokenType.TTIDEN
@@ -113,7 +113,7 @@ export default class Lexer {
       if (this.cc == '"') {
         this.nextChar()
       } else {
-        throw new Error("string literal require right quote")
+        this.diagnosis.addError(new ErrorReport("string literal require right quote", this.pos))
       }
       this.token = token
       this.tokenType = TokenType.TTLITERAL
@@ -142,11 +142,6 @@ export default class Lexer {
         default:
           throw new Error("unknown char: " + this.cc)
       }
-    }
-
-    return {
-      token: this.token,
-      tokenType: this.tokenType
     }
   }
 
