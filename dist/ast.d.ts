@@ -10,4 +10,5 @@ export default class AstNode {
     nval: number;
     car: AstNode;
     cdr: AstNode;
+    toString(): string;
 }

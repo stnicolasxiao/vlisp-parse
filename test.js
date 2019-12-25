@@ -5,4 +5,4 @@ const code = fs.readFileSync('./examples/base.lisp', 'utf-8')
 
 const node = parser.parse(code)
 
-console.log(node)
+console.log(node.toString())
