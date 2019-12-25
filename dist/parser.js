@@ -15,9 +15,11 @@ class Parser {
         this.lexer.nextToken();
     }
     Parse() {
+        console.log('parse:' + this.lexer.token);
         return this.ParseForm();
     }
     ParseForm() {
+        console.log('parse form:' + this.lexer.token);
         switch (this.lexer.tokenType) {
             case lexer_1.TokenType.TTIDEN:
                 {
@@ -68,6 +70,7 @@ class Parser {
         }
     }
     ParseSExpr() {
+        console.log('parse sexpr:' + this.lexer.token);
         if (this.lexer.isType(lexer_1.TokenType.TTLBRK)) {
             this.lexer.nextToken();
             let nodes = [];
@@ -106,10 +109,11 @@ function makeList(nodes, isDotList) {
     let cdrNode = new ast_1.default();
     cdrNode.nodeType = ast_1.NodeType.NTSEXPR;
     for (let x = nodes.length - 1; x >= 0; x--) {
-        cdrNode = new ast_1.default();
-        cdrNode.nodeType = ast_1.NodeType.NTSEXPR;
-        cdrNode.car = nodes[x];
-        cdrNode.cdr = cdrNode;
+        let cdrNode2 = new ast_1.default();
+        cdrNode2.nodeType = ast_1.NodeType.NTSEXPR;
+        cdrNode2.car = nodes[x];
+        cdrNode2.cdr = cdrNode;
+        cdrNode = cdrNode2;
     }
     return cdrNode;
 }
@@ -121,10 +125,11 @@ function makeCons(nodes) {
     }
     cdrNode = nodes[nodes.length - 1];
     for (let x = nodes.length - 2; x >= 0; x--) {
-        cdrNode = new ast_1.default();
-        cdrNode.nodeType = ast_1.NodeType.NTSEXPR;
-        cdrNode.car = nodes[x];
-        cdrNode.cdr = cdrNode;
+        let cdrNode2 = new ast_1.default();
+        cdrNode2.nodeType = ast_1.NodeType.NTSEXPR;
+        cdrNode2.car = nodes[x];
+        cdrNode2.cdr = cdrNode;
+        cdrNode = cdrNode2;
     }
     return cdrNode;
 }

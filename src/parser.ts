@@ -16,10 +16,12 @@ export default class Parser {
 
 
   Parse(): AstNode {
+    console.log('parse:' + this.lexer.token)
     return this.ParseForm()
   }
 
   ParseForm(): AstNode {
+    console.log('parse form:' + this.lexer.token)
     switch (this.lexer.tokenType) {
       case TokenType.TTIDEN:
         {
@@ -71,15 +73,16 @@ export default class Parser {
     }
   }
   ParseSExpr(): AstNode {
+    console.log('parse sexpr:' + this.lexer.token)
     if (this.lexer.isType(TokenType.TTLBRK)) {
-       this.lexer.nextToken() 
+      this.lexer.nextToken()
 
       let nodes: AstNode[] = []
 
       let isDotList: boolean = false
       while (!this.lexer.isType(TokenType.TTEOF) && !this.lexer.isType(TokenType.TTRBRK)) {
         if (this.lexer.token == ".") {
-           this.lexer.nextToken()
+          this.lexer.nextToken()
           isDotList = true
         } else {
           // todo if isdotlist is true, only one can follow it
@@ -112,10 +115,11 @@ function makeList(nodes: AstNode[], isDotList: boolean): AstNode {
   cdrNode.nodeType = NodeType.NTSEXPR
 
   for (let x: number = nodes.length - 1; x >= 0; x--) {
-    cdrNode = new AstNode()
-    cdrNode.nodeType = NodeType.NTSEXPR
-    cdrNode.car = nodes[x]
-    cdrNode.cdr = cdrNode
+    let cdrNode2: AstNode = new AstNode()
+    cdrNode2.nodeType = NodeType.NTSEXPR
+    cdrNode2.car = nodes[x]
+    cdrNode2.cdr = cdrNode
+    cdrNode = cdrNode2
   }
   return cdrNode
 }
@@ -130,10 +134,11 @@ function makeCons(nodes: AstNode[]): AstNode {
   cdrNode = nodes[nodes.length - 1]
 
   for (let x: number = nodes.length - 2; x >= 0; x--) {
-    cdrNode = new AstNode()
-    cdrNode.nodeType = NodeType.NTSEXPR
-    cdrNode.car = nodes[x]
-    cdrNode.cdr = cdrNode
+    let cdrNode2: AstNode = new AstNode()
+    cdrNode2.nodeType = NodeType.NTSEXPR
+    cdrNode2.car = nodes[x]
+    cdrNode2.cdr = cdrNode
+    cdrNode = cdrNode2
   }
   return cdrNode
 }
