@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node ./src/main.ts",
+    "build": "tsc --declaration",
+    "test": "node ./test.js"
   },
   "repository": {
     "type": "git",
@@ -12,9 +14,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "LGPL",
   "bugs": {
     "url": "https://github.com/nicolassiu/vlisp-parse/issues"
   },
-  "homepage": "https://github.com/nicolassiu/vlisp-parse#readme"
+  "homepage": "https://github.com/nicolassiu/vlisp-parse#readme",
+  "devDependencies": {
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  }
 }
