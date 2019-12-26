@@ -18,8 +18,10 @@ export default class Lexer {
     sourceLen: number;
     diagnosis: Diagnosis;
     pos: Position;
+    lineStart: number;
     constructor(source: string, diagnosis: Diagnosis);
     getPos(): Position;
+    updatePos(nextline: boolean): void;
     nextChar(): void;
     isType(tokenType: TokenType): boolean;
     nextToken(): void;

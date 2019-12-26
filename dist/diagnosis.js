@@ -5,12 +5,15 @@ class Position {
         this.line = line;
         this.col = col;
     }
+    clone() {
+        return new Position(this.line, this.col);
+    }
 }
 exports.Position = Position;
 class ErrorReport {
     constructor(message, pos) {
         this.message = message;
-        this.pos = pos;
+        this.pos = pos.clone();
     }
     toString() {
         return `At line ${this.pos.line} col ${this.pos.col}: ${this.message}`;

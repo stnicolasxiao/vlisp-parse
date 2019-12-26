@@ -45,23 +45,34 @@ export default class Lexer {
   sourceLen: number
   diagnosis: Diagnosis
   pos: Position
-
+  lineStart:number
   constructor(source: string, diagnosis: Diagnosis) {
     this.source = source
     this.sourceLen = this.source.length
     this.cc = ''
     this.pc = 0
     this.diagnosis = diagnosis
-    this.pos = new Position(0, 0)
+    this.pos = new Position(1, 1)
+    this.lineStart=0
     this.nextChar()
   }
   getPos(): Position {
     return this.pos
   }
+  updatePos(nextline:boolean) {
+    if (nextline) {
+      this.pos.line++
+      this.pos.col=1
+      this.lineStart=this.pc
+    } else {
+      this.pos.col = this.pc-this.lineStart+1
+    }
+  }
 
   nextChar() {
     if (this.pc < this.sourceLen) {
       this.cc = this.source[this.pc]
+      this.updatePos(this.cc=='\n')
       this.pc++
     } else {
       this.cc = ''

@@ -5,13 +5,16 @@ export class Position {
     this.line=line
     this.col=col
   }
+  clone():Position{
+    return new Position(this.line, this.col)
+  }
 }
 export class ErrorReport {
   message: string
   pos: Position
   constructor(message: string, pos: Position) {
     this.message = message
-    this.pos = pos
+    this.pos = pos.clone()
   }
   toString():string{
     return `At line ${this.pos.line} col ${this.pos.col}: ${this.message}`

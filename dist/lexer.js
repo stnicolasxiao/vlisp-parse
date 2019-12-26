@@ -46,15 +46,27 @@ class Lexer {
         this.cc = '';
         this.pc = 0;
         this.diagnosis = diagnosis;
-        this.pos = new diagnosis_1.Position(0, 0);
+        this.pos = new diagnosis_1.Position(1, 1);
+        this.lineStart = 0;
         this.nextChar();
     }
     getPos() {
         return this.pos;
     }
+    updatePos(nextline) {
+        if (nextline) {
+            this.pos.line++;
+            this.pos.col = 1;
+            this.lineStart = this.pc;
+        }
+        else {
+            this.pos.col = this.pc - this.lineStart + 1;
+        }
+    }
     nextChar() {
         if (this.pc < this.sourceLen) {
             this.cc = this.source[this.pc];
+            this.updatePos(this.cc == '\n');
             this.pc++;
         }
         else {

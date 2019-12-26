@@ -2,6 +2,7 @@ export declare class Position {
     line: number;
     col: number;
     constructor(line: number, col: number);
+    clone(): Position;
 }
 export declare class ErrorReport {
     message: string;
