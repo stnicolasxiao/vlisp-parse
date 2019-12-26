@@ -9,14 +9,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const lexer_1 = __importStar(require("./lexer"));
 const ast_1 = __importStar(require("./ast"));
+const diagnosis_1 = __importStar(require("./diagnosis"));
 class Parser {
     constructor(source) {
-        this.lexer = new lexer_1.default(source);
+        this.diagnosis = new diagnosis_1.default();
+        this.lexer = new lexer_1.default(source, this.diagnosis);
         this.lexer.nextToken();
     }
     Parse() {
         console.log('parse:' + this.lexer.token);
         return this.ParseForm();
+    }
+    emitDiagnosis() {
+        this.diagnosis.report();
     }
     ParseForm() {
         console.log('parse form:' + this.lexer.token);
@@ -33,7 +38,8 @@ class Parser {
                 {
                     let num = parseFloat(this.lexer.token);
                     if (isNaN(num)) {
-                        throw new Error('not a number');
+                        this.diagnosis.addError(new diagnosis_1.ErrorReport('interal error not a number', this.lexer.pos));
+                        num = 0; // put a default number
                     }
                     let node = new ast_1.default();
                     node.nodeType = ast_1.NodeType.NTNUM;
@@ -66,7 +72,8 @@ class Parser {
                     return makeList(nodes, false);
                 }
             default:
-                throw new Error("unknown token:" + this.lexer.token);
+                this.diagnosis.addError(new diagnosis_1.ErrorReport("unknown token:" + this.lexer.token, this.lexer.pos));
+                this.lexer.nextToken(); //ignore this token
         }
     }
     ParseSExpr() {
@@ -92,12 +99,16 @@ class Parser {
                 return cdrNode;
             }
             else {
-                throw new Error("require )");
+                this.diagnosis.addError(new diagnosis_1.ErrorReport("require )", this.lexer.pos));
+                //ignore it
+                return cdrNode;
             }
         }
         else {
             // error
-            throw new Error("require (");
+            this.diagnosis.addError(new diagnosis_1.ErrorReport("require (", this.lexer.pos));
+            // step forward
+            this.lexer.nextToken();
         }
     }
 }

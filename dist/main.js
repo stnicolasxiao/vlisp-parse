@@ -8,6 +8,7 @@ function parse(source) {
     console.log("mofalisp v0.0.1 by nicolassiu");
     let parser = new parser_1.default(source);
     let node = parser.Parse();
+    parser.emitDiagnosis();
     return node;
 }
 exports.parse = parse;

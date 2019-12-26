@@ -13,10 +13,18 @@ export class ErrorReport {
     this.message = message
     this.pos = pos
   }
+  toString():string{
+    return `At line ${this.pos.line} col ${this.pos.col}: ${this.message}`
+  }
 }
 export default class Diagnosis {
-  errors: ErrorReport[]
+  errors: ErrorReport[] = []
   addError(error: ErrorReport) {
     this.errors.push(error)
+  }
+  report() {
+    this.errors.forEach(error => {
+      console.log(error.toString())
+    })
   }
 }

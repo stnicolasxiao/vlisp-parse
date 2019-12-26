@@ -7,6 +7,8 @@ export function parse(source: string): AstNode {
   let parser: Parser = new Parser(source)
 
   let node: AstNode = parser.Parse()
-  
+
+  parser.emitDiagnosis()
+
   return node
 }

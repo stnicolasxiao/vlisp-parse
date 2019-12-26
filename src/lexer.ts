@@ -140,9 +140,9 @@ export default class Lexer {
           this.nextChar()
           break;
         default:
-          throw new Error("unknown char: " + this.cc)
+          this.diagnosis.addError(new ErrorReport("unknown char: " + this.cc, this.pos))
+          this.nextChar() //ignore the error char
       }
     }
   }
-
 }

@@ -1,7 +1,7 @@
 
 import Lexer, { TokenType } from './lexer'
 import AstNode, { NodeType } from './ast'
-import Diagnosis from './diagnosis'
+import Diagnosis, { ErrorReport } from './diagnosis'
 
 interface Token {
   token: string
@@ -22,6 +22,10 @@ export default class Parser {
     return this.ParseForm()
   }
 
+  emitDiagnosis() {
+    this.diagnosis.report()
+  }
+
   ParseForm(): AstNode {
     console.log('parse form:' + this.lexer.token)
     switch (this.lexer.tokenType) {
@@ -38,7 +42,8 @@ export default class Parser {
           let num: number = parseFloat(this.lexer.token)
 
           if (isNaN(num)) {
-            throw new Error('not a number')
+            this.diagnosis.addError(new ErrorReport('interal error not a number', this.lexer.pos))
+            num = 0 // put a default number
           }
           let node: AstNode = new AstNode()
           node.nodeType = NodeType.NTNUM
@@ -71,7 +76,8 @@ export default class Parser {
           return makeList(nodes, false)
         }
       default:
-        throw new Error("unknown token:" + this.lexer.token)
+        this.diagnosis.addError(new ErrorReport("unknown token:" + this.lexer.token, this.lexer.pos))
+        this.lexer.nextToken() //ignore this token
     }
   }
   ParseSExpr(): AstNode {
@@ -99,12 +105,16 @@ export default class Parser {
         this.lexer.nextToken()
         return cdrNode
       } else {
-        throw new Error("require )")
+        this.diagnosis.addError(new ErrorReport("require )", this.lexer.pos))
+        //ignore it
+        return cdrNode
       }
 
     } else {
       // error
-      throw new Error("require (")
+      this.diagnosis.addError(new ErrorReport("require (", this.lexer.pos))
+      // step forward
+      this.lexer.nextToken()
     }
   }
 }

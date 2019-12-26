@@ -1,3 +1,4 @@
+import Diagnosis, { Position } from './diagnosis';
 export declare enum TokenType {
     TTIDEN = 0,
     TTLITERAL = 1,
@@ -15,11 +16,11 @@ export default class Lexer {
     pc: number;
     source: string;
     sourceLen: number;
-    constructor(source: string);
+    diagnosis: Diagnosis;
+    pos: Position;
+    constructor(source: string, diagnosis: Diagnosis);
+    getPos(): Position;
     nextChar(): void;
     isType(tokenType: TokenType): boolean;
-    nextToken(): {
-        token: string;
-        tokenType: TokenType;
-    };
+    nextToken(): void;
 }

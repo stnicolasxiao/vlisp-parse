@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const diagnosis_1 = require("./diagnosis");
 var TokenType;
 (function (TokenType) {
     TokenType[TokenType["TTIDEN"] = 0] = "TTIDEN";
@@ -39,12 +40,17 @@ function isSpace(c) {
     return c == ' ' || c == '\r' || c == '\n' || c == '\t';
 }
 class Lexer {
-    constructor(source) {
+    constructor(source, diagnosis) {
         this.source = source;
         this.sourceLen = this.source.length;
         this.cc = '';
         this.pc = 0;
+        this.diagnosis = diagnosis;
+        this.pos = new diagnosis_1.Position(0, 0);
         this.nextChar();
+    }
+    getPos() {
+        return this.pos;
     }
     nextChar() {
         if (this.pc < this.sourceLen) {
@@ -101,7 +107,7 @@ class Lexer {
                 this.nextChar();
             }
             else {
-                throw new Error("string literal require right quote");
+                this.diagnosis.addError(new diagnosis_1.ErrorReport("string literal require right quote", this.pos));
             }
             this.token = token;
             this.tokenType = TokenType.TTLITERAL;
@@ -130,13 +136,10 @@ class Lexer {
                     this.nextChar();
                     break;
                 default:
-                    throw new Error("unknown char: " + this.cc);
+                    this.diagnosis.addError(new diagnosis_1.ErrorReport("unknown char: " + this.cc, this.pos));
+                    this.nextChar(); //ignore the error char
             }
         }
-        return {
-            token: this.token,
-            tokenType: this.tokenType
-        };
     }
 }
 exports.default = Lexer;
